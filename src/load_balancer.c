@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "utils.h"
-#include "load_balancer.h"
+#include <utils.h>
+#include <load_balancer.h>
 
 struct server_info {
 	// stores the hash of the label (ex. hash(000034), hash(200034))

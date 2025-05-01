@@ -1,23 +1,31 @@
-CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra
-LOAD=load_balancer
-SERVER=server_hashmap
+CC = gcc
+CFLAGS = -std=c99 -Wall -Wextra
 
-.PHONY: build clean
+INCLUDEDIR = include
+SRCDIR = src
+BUILDDIR = build
 
-build: balancer
+TARGET = balancer
 
-balancer: main.o $(LOAD).o $(SERVER).o
-	$(CC) $^ -o $@
 
-main.o: main.c
-	$(CC) $(CFLAGS) $^ -c
+SRCS = $(wildcard src/*.c)
+OBJS = $(SRCS:%.c=%.o)
+TARGET = balancer
 
-$(SERVER).o: $(SERVER).c $(SERVER).h
-	$(CC) $(CFLAGS) $^ -c
+SOURCES = $(wildcard $(SRCDIR)/*.c)
+OBJECTS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SOURCES))
 
-$(LOAD).o: $(LOAD).c $(LOAD).h
-	$(CC) $(CFLAGS) $^ -c
+
+all: $(BUILDDIR)/$(TARGET)
+
+$(BUILDDIR)/$(TARGET): $(OBJECTS)
+	$(CC) -o $@ $^
+	rm $(OBJECTS)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
 
 clean:
-	rm -f *.o balancer *.h.gch
+	rm $(BUILDDIR)/$(TARGET)
+
+.PHONY: all clean
