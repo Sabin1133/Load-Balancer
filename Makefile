@@ -1,31 +1,24 @@
-CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
 
 INCLUDEDIR = include
 SRCDIR = src
 BUILDDIR = build
 
+# SOURCES := $(wildcard $(SRCDIR)/*.cpp)
+SOURCES := $(shell find src -name '*.cpp')
+OBJECTS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SOURCES))
 TARGET = balancer
-
-
-SRCS = $(wildcard src/*.c)
-OBJS = $(SRCS:%.c=%.o)
-TARGET = balancer
-
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-OBJECTS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SOURCES))
-
 
 all: $(BUILDDIR)/$(TARGET)
 
 $(BUILDDIR)/$(TARGET): $(OBJECTS)
-	$(CC) -o $@ $^
-	rm $(OBJECTS)
+	$(CXX) -o $@ $^
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) $(CFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
 
 clean:
-	rm $(BUILDDIR)/$(TARGET)
+	rm $(OBJECTS) $(BUILDDIR)/$(TARGET)
 
 .PHONY: all clean
