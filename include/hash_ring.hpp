@@ -1,3 +1,6 @@
+#ifndef HASH_RING_H
+#define HASH_RING_H
+
 #include <stdint.h>
 
 #include <vector>
@@ -56,3 +59,5 @@ public:
     
     void print_ring();
 };
+
+#endif // hash_ring.hpp
