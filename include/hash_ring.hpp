@@ -1,35 +1,34 @@
 #include <stdint.h>
 
+#include <vector>
+#include <unordered_map>
+
+
+typedef unsigned long ring_id_t;
+
 
 struct Endpoint {
     uint32_t address;
     uint16_t port;
 
-    bool operator==(const Endpoint &other) const
-    {
-        return this->address == other.address && this->port == other.port;
-    }
+    Endpoint();
+    Endpoint(uint32_t address, uint16_t port);
+
+    bool operator==(const Endpoint &other) const;
 };
 
-struct EndpointHasher {
-    std::size_t operator()(const Endpoint &endpoint) const
-    {
-        std::size_t ulong_a = endpoint.address;
-
-        ulong_a = ((ulong_a >> 16u) ^ ulong_a) * 0x45d9f3b;
-        ulong_a = (ulong_a >> 16u) ^ endpoint.port;
-        ulong_a = ((ulong_a >> 16u) ^ ulong_a) * 0x45d9f3b;
-        ulong_a = (ulong_a >> 16u) ^ ulong_a;
-
-        return ulong_a;
-    }
-};
+namespace std {
+    template <>
+    struct hash<Endpoint> {
+        std::size_t operator()(const Endpoint &endpoint) const;
+    };
+}
 
 struct HashNode {
-    unsigned int id;
+    ring_id_t id;
     std::size_t hash;
 
-    HashNode(unsigned int id, std::size_t hash): id(id), hash(hash) {}
+    HashNode(unsigned int id, std::size_t hash);
 };
 
 class HashRing {
@@ -37,11 +36,11 @@ private:
     unsigned int n;
     unsigned int size;
 
-    std::unordered_map<Endpoint, unsigned int, EndpointHasher> ids;
-    std::unordered_map<unsigned int, Endpoint> endpoints;
+    std::unordered_map<ring_id_t, Endpoint> endpoints;
     std::vector<HashNode> nodes;
 
 public:
+    HashRing();
     HashRing(unsigned int servers_n);
 
 private:
@@ -53,5 +52,7 @@ public:
 
     Endpoint distribute(Endpoint client_endpoint);
 
+    /*----testing----*/
+    
     void print_ring();
 };

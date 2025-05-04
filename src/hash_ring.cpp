@@ -1,15 +1,29 @@
-#include <iostream>
-
-#include <vector>
-#include <unordered_map>
-
 #include <hash_ring.hpp>
 
 #define MAX_SERVERS_N 1024
-#define REPLICA_N 2
+#define REPLICAS_N 2
 
 
-std::size_t id_hash(unsigned int id)
+typedef unsigned long ring_label_t;
+
+
+ring_id_t endpoint_to_ring_id(Endpoint endpoint)
+{
+    ring_id_t id;
+
+    id = endpoint.address;
+    id <<= 16;
+    id ^= endpoint.port;
+
+    return id;
+}
+
+ring_label_t ring_label_from_ring_id(ring_id_t id, uint16_t tag)
+{
+    return ((ring_id_t)tag << 48) ^ id;
+}
+
+std::size_t ring_label_hash(ring_id_t id)
 {
     std::size_t ulong_a = id;
 
@@ -20,12 +34,37 @@ std::size_t id_hash(unsigned int id)
 	return ulong_a;
 }
 
+Endpoint::Endpoint(): address(0), port(0) {}
+Endpoint::Endpoint(uint32_t address, uint16_t port): address(address), port(port) {}
+
+bool Endpoint::operator==(const Endpoint &other) const
+{
+    return this->address == other.address && this->port == other.port;
+}
+
+std::size_t std::hash<Endpoint>::operator()(const Endpoint &endpoint) const
+{
+    std::size_t ulong_a = endpoint.address;
+
+    ulong_a = ((ulong_a >> 16u) ^ ulong_a) * 0x45d9f3b;
+    ulong_a = (ulong_a >> 16u) ^ endpoint.port;
+    ulong_a = ((ulong_a >> 16u) ^ ulong_a) * 0x45d9f3b;
+    ulong_a = (ulong_a >> 16u) ^ ulong_a;
+
+    return ulong_a;
+}
+
+HashNode::HashNode(unsigned int id, std::size_t hash): id(id), hash(hash) {}
+
+HashRing::HashRing(): n(4), size(0) {}
+
 HashRing::HashRing(unsigned int servers_n)
 {
     if (servers_n > MAX_SERVERS_N)
         servers_n = MAX_SERVERS_N;
 
     this->n = servers_n;
+    this->size = 0;
 }
 
 unsigned int HashRing::_find_smallest_bigger(std::size_t hash)
@@ -51,23 +90,20 @@ unsigned int HashRing::_find_smallest_bigger(std::size_t hash)
 
 void HashRing::add(Endpoint server_endpoint)
 {
-    unsigned int id;
-    auto &ids = this->ids;
+    ring_id_t id;
     auto &endpoints = this->endpoints;
     auto &nodes = this->nodes;
 
-    if (this->size >= this->n || ids.find(server_endpoint) != ids.end())
+    if (this->size >= this->n)
         return;
 
-    for (unsigned int i = 0; i < this->n; ++i)
-        if (endpoints.find(i) == endpoints.end()) {
-            id = i;
+    id = endpoint_to_ring_id(server_endpoint);
 
-            break;
-        }
+    if (endpoints.find(id) != endpoints.end())
+        return;
 
-    for (unsigned int i = 0; i < REPLICA_N; ++i) {
-        std::size_t hash = id_hash(id + i * this->n);
+    for (unsigned int i = 0; i < REPLICAS_N; ++i) {
+        std::size_t hash = ring_label_hash(ring_label_from_ring_id(id, i));
 
         if (nodes.empty() || hash >= (*(--nodes.end())).hash)
             nodes.push_back(HashNode(id, hash));
@@ -75,36 +111,40 @@ void HashRing::add(Endpoint server_endpoint)
             nodes.insert(nodes.begin() + this->_find_smallest_bigger(hash), HashNode(id, hash));
     }
 
-    ids[server_endpoint] = id;
     endpoints[id] = server_endpoint;
+
+    ++this->size;
 }
 
 void HashRing::remove(Endpoint server_endpoint)
 {
-    unsigned int id;
+    ring_id_t id;
+    auto endpoints = this->endpoints;
 
-    if (ids.find(server_endpoint) == ids.end())
+    id = endpoint_to_ring_id(server_endpoint);
+
+    if (endpoints.find(id) == endpoints.end())
         return;
 
-    id = ids[server_endpoint];
-
-    ids.erase(server_endpoint);
-    endpoints.erase(id);
-
-    for (auto iter = this->nodes.begin(); iter != this->nodes.end(); ++iter)
+    for (auto iter = nodes.begin(); iter != nodes.end(); ++iter)
         if ((*iter).id == id) {
-            this->nodes.erase(iter);
+            nodes.erase(iter);
             --iter;
         }
+
+    endpoints.erase(id);
+
+    --this->size;
 }
 
 Endpoint HashRing::distribute(Endpoint client_endpoint)
 {
+    unsigned int index;
+    ring_id_t id;
 
-}
+    id = endpoint_to_ring_id(client_endpoint);
 
-void HashRing::print_ring()
-{
-    for (auto node : nodes)
-        std::cout << node.id << ' ' << node.hash << '\n';
+    index = this->_find_smallest_bigger(ring_label_hash(ring_label_from_ring_id(id, 0)));
+
+    return this->endpoints[this->nodes[index].id];
 }

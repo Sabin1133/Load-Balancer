@@ -1,5 +1,8 @@
 # artifacts
 build/
 
+# testing
+test/
+
 # vscode config
 .vscode/
