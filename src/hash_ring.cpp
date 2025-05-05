@@ -54,7 +54,7 @@ std::size_t std::hash<Endpoint>::operator()(const Endpoint &endpoint) const
     return ulong_a;
 }
 
-HashNode::HashNode(unsigned int id, std::size_t hash): id(id), hash(hash) {}
+HashNode::HashNode(ring_id_t id, std::size_t hash): id(id), hash(hash) {}
 
 HashRing::HashRing(): n(4), size(0) {}
 

@@ -31,7 +31,7 @@ struct HashNode {
     ring_id_t id;
     std::size_t hash;
 
-    HashNode(unsigned int id, std::size_t hash);
+    HashNode(ring_id_t id, std::size_t hash);
 };
 
 class HashRing {
