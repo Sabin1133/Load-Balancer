@@ -1,92 +1,97 @@
-##### Copyright 2023 Padurariu Sabin
+##### Copyright 2024 Padurariu Sabin
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┏━━━┓┏━━━┓┏━━━┓┏━━━┓━━━┏━┓┏━┓┏━━━┓━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┃┏━┓┃┃┏━━┛┃┏━┓┃┗┓┏┓┃━━━┃┃┗┛┃┃┃┏━━┛━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┃┗━┛┃┃┗━━┓┃┃━┃┃━┃┃┃┃━━━┃┏┓┏┓┃┃┗━━┓━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┃┏┓┏┛┃┏━━┛┃┗━┛┃━┃┃┃┃━━━┃┃┃┃┃┃┃┏━━┛━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┃┃┃┗┓┃┗━━┓┃┏━┓┃┏┛┗┛┃━━━┃┃┃┃┃┃┃┗━━┓━━━━━━━━━━━━━━━━━━━━━━━
-━━━━━━━━━━━━━━━━━━━━━━━┗┛┗━┛┗━━━┛┗┛━┗┛┗━━━┛━━━┗┛┗┛┗┛┗━━━┛━━━━━━━━━━━━━━━━━━━━━━━
+━━━┏━━━┓┏━━━┓┏━━━┓━━━━┏┓━━┏┓┏━━━┓┏┓━┏┓━━━━┏━━━┓┏━━━┓┏━━━┓┏━━━┓┏━━┓┏━┓━┏┓┏━━━┓━━━
+━━━┃┏━┓┃┃┏━┓┃┃┏━━┛━━━━┃┗┓┏┛┃┃┏━┓┃┃┃━┃┃━━━━┃┏━┓┃┃┏━━┛┃┏━┓┃┗┓┏┓┃┗┫┣┛┃┃┗┓┃┃┃┏━┓┃━━━
+━━━┃┃━┃┃┃┗━┛┃┃┗━━┓━━━━┗┓┗┛┏┛┃┃━┃┃┃┃━┃┃━━━━┃┗━┛┃┃┗━━┓┃┃━┃┃━┃┃┃┃━┃┃━┃┏┓┗┛┃┃┃━┗┛━━━
+━━━┃┗━┛┃┃┏┓┏┛┃┏━━┛━━━━━┗┓┏┛━┃┃━┃┃┃┃━┃┃━━━━┃┏┓┏┛┃┏━━┛┃┗━┛┃━┃┃┃┃━┃┃━┃┃┗┓┃┃┃┃┏━┓━━━
+━━━┃┏━┓┃┃┃┃┗┓┃┗━━┓━━━━━━┃┃━━┃┗━┛┃┃┗━┛┃━━━━┃┃┃┗┓┃┗━━┓┃┏━┓┃┏┛┗┛┃┏┫┣┓┃┃━┃┃┃┃┗┻━┃━━━
+━━━┗┛━┗┛┗┛┗━┛┗━━━┛━━━━━━┗┛━━┗━━━┛┗━━━┛━━━━┗┛┗━┛┗━━━┛┗┛━┗┛┗━━━┛┗━━┛┗┛━┗━┛┗━━━┛━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┏━┓┏━┓┏━━━┓━━━━┏━━━┓━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┃┗┛┃┃┃┏━━┛━━━━┃┏━┓┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┏┓┏┓┃┃┗━━┓━━━━┗┛┏┛┃━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┃┃┃┃┃┃┏━━┛━━━━━━┃┏┛━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┃┃┃┃┃┃┃┗━━┓━━━━━━┏┓━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┗┛┗┛┗┛┗━━━┛━━━━━━┗┛━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-<br>
-
-# **SERVER LOAD BALANCER**
-
-## Important remarks and notes beforehand:
-
-* This software relies heavily on dynamic allocated memory and it is
-recommended that the input may be of manageable size
-* The implementation is based on and uses hashmaps and resizable arrays
-
-<br>
+# **Transport Layer Load Balancer**
 
 ## **General Overview**
 
-The programme is a basic implementation of a load balancer, a device used to
-redirect the traffic to a large group of servers that a limited computing power.
+Trivial implementation of a load balancer that leverages consistent hashing to
+distribute the load (the traffic) to a large number of servers that have limited
+computing power.
 
-So for this reason it uses a technique called consistent hashing to evenly 
-distribute the incoming requests to the servers.
+The balancer runs in the background and is configured using the `balancerctl`
+utility.
 
-This technique is frequently used in distributed systems and it has the 
-advantage of providing minimal disruption constraint, which means that it 
+## Getting Started
+
+To install both the executable and the utility, run the provided installation
+script `install.sh`.
+
+## Functionality
+
+The load balancer distributes the load evenly and efficiently across all servers
+using a technique called **consistent hashing**.
+
+Consistent hashing is frequently used in distributed systems and has the
+advantage of satisfying the **minimal disruption constraint**, meaning it 
 reduces the amount of necessary transfers when a server is turned on or off.
 
-It makes use of a hash ring to efficiently store the incoming entries.
+When a client connects, the balancer finds a server to establish a connection
+with and forwards the traffic to the selected server.
 
-## **Processing Commands**
+Currently, if a server is removed or shuts down abruptly, all client connections
+to that server are closed as well. Normally, the clients should be redistributed
+to the other servers as a result of consistent hashing but this feature is yet
+to be implemented.
 
-The program's purpose is to efficiently store key and value pairs on servers
-and for fast searching and retrieving and can identify 4 different commands 
-read from the standard input, every single command having its own arguments 
-described below (the arguments are marked with <>):
+## Usage and API
 
+The load balancer can be controlled using the `balancerctl` utility that
+provides five main actions:
+
+1. **Start** the balancer
+2. **Stop** the balancer
+3. **Add** server to balancer's pool
+4. **Remove** server from balancer's pool
+5. **List** all servers in balancer's pool
+
+### Start and stop balancer
+
+```bash
+user@hostname:~$ balancerctl start <inet_address> <inet_port>
 ```
-add_server <id>
+```bash
+user@hostname:~$ balancerctl stop
 ```
-* Adds a server with the given id to the main load balancer, and three copies 
-to the hashring, and redistributes the stored elements
 
+### Configure servers
+
+```bash
+user@hostname:~$ balancerctl add <inet_address> <inet_port>
 ```
-remove_server <id>
+```bash
+user@hostname:~$ balancerctl remove <inet_address> <inet_port>
 ```
-* Removes the server with the gievn id, and its copies from the hashring, and
-redistributes the stored elements
-
+```bash
+user@hostname:~$ balancerctl list
 ```
-store <key> <value>
-```
-* Stores the pair efficiently on the servers
-* The key and value must be strings that begin and end with "
 
-```
-retrieve <key>
-```
-* Retrieves the value associated with the key form the corresponding server
-* The key must be a string
+## Implementation
 
----
-<br>
+### The Connection Engine
 
-## **Other remarks and programming details for geeks :wink:**
+The `ConnectionEngine` lies at the **core** of the balancer and is resposible
+with accepting and distributing incoming connections and forwarding the traffic
+from the clients to the servers.
 
-* The implementation is linux kernel based and the code format is done 
-accordingly hence every variable is declared at the start of every function
-so there are no function scoped variables
+By **multiplexing connections** using the `epoll` kernel data structure, the
+balancer is able to achieve fast response times and improve performance.
 
-* Every list/array used is 0-indexed and allocated dynamically on the heap
+### The Hash Ring
 
-* The frees and mallocs/callocs are done in cascade so every free function call
-calls other function and so on until all the requested memory is freed
-* At the end after all the operations the program closes gracefully and `frees`
-all memory allocated on the heap so there are no memory leaks
-
-* the server_memory struct is just a hashmap in disguise and the load_balancer
-struct just a resizable array that stores hashmaps according to the 
-hash ring rule
-* the hashmap can only store string key and value pairs
-* for the programme to work properly there needs to be at least a server added 
-so that the entries can be stored somewhere
-
-<br>
+The theoretical model used in consistent hashing is the **hash ring**.
