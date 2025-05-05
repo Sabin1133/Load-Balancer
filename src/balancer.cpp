@@ -1,6 +1,6 @@
-#include <networking.h>
+#include "inetw.h"
 
-#include <conn_engine.hpp>
+#include "conn_engine.hpp"
 
 #define PORT 8192
 

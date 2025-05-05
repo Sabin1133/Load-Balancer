@@ -1,0 +1,38 @@
+#include <unistd.h>
+
+#include "utils/ipc_utils.hpp"
+
+
+int listening_unix_socket(std::string unix_address, int n)
+{
+    int rc;
+    int fd = -1;
+    struct sockaddr_un addr_info = {0};
+
+    fd = socket(AF_UNIX, SOCK_STREAM, 0);
+
+    if (fd == -1)
+        return -1;
+
+    addr_info.sun_family = AF_UNIX;
+    addr_info.sun_path[0] = '\0';
+    strcpy(addr_info.sun_path + 1, unix_address.c_str());
+    
+    rc = bind(fd, (const struct sockaddr *)&addr_info, sizeof(addr_info.sun_family) + 1 + unix_address.length());
+
+    if (rc == -1) {
+        close(fd);
+
+        return -1;
+    }
+
+    rc = listen(fd, n);
+
+    if (rc == -1) {
+        close(fd);
+
+        return -1;
+    }
+
+    return fd;
+}

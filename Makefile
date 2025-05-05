@@ -3,57 +3,52 @@ CXXFLAGS = -std=c++17 -Wall -Wextra
 
 INCLUDEDIR = include
 SRCDIR = src
+LIBDIR = lib
+TESTDIR = test
 BUILDDIR = build
 
-# # SOURCES := $(wildcard $(SRCDIR)/*.cpp)
-# SOURCES := $(shell find src -name '*.cpp')
-# OBJECTS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SOURCES))
-# TARGET = balancer
+MAINSOURCE := $(SRCDIR)/balancer.cpp
+MAINOBJECT := $(MAINSOURCE:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
+MAINTARGET := $(MAINSOURCE:$(SRCDIR)/%.cpp=$(BUILDDIR)/%)
 
+TESTSOURCES := $(shell find test -name '*.cpp')
+TESTOBJECTS := $(patsubst $(TESTDIR)/%.cpp, $(BUILDDIR)/%.o, $(TESTSOURCES))
+TESTTARGETS := $(patsubst $(TESTDIR)/%.cpp, $(BUILDDIR)/%, $(TESTSOURCES))
 
-# all: $(BUILDDIR)/$(TARGET)
-
-# $(BUILDDIR)/$(TARGET): $(OBJECTS)
-# 	$(CXX) -o $@ $^
-
-# $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-# 	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
-
-# clean:
-# 	rm $(BUILDDIR)/*
-# 	rm $(OBJECTS) $(BUILDDIR)/$(TARGET)
-
-# .PHONY: all clean
-
-TESTDIR = test
-
-MAINSOURCE = $(SRCDIR)/balancer.cpp
-MAINOBJECT = $(MAINSOURCE:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
-SOURCES = $(filter-out $(MAINSOURCE), $(shell find src -name '*.cpp'))
+SOURCES := $(filter-out $(MAINSOURCE), $(shell find src -name '*.cpp'))
 OBJECTS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SOURCES))
-TARGET = balancer
 
-TESTSOURCES = $(shell find test -name '*.cpp')
-TESTTARGETS = $(patsubst $(TESTDIR)/%.cpp, $(BUILDDIR)/%, $(TESTSOURCES))
+LIBSOURCES := $(shell find lib -name '*.cpp')
+LIBOBJECTS := $(patsubst $(LIBDIR)/%.cpp, $(BUILDDIR)/%.o, $(LIBSOURCES))
 
 
-all: $(BUILDDIR)/$(TARGET)
+all: $(MAINTARGET)
 
-$(BUILDDIR)/$(TARGET): $(MAINOBJECT) $(OBJECTS)
+tests: $(TESTTARGETS)
+
+$(MAINTARGET): $(MAINOBJECT) $(OBJECTS) $(LIBOBJECTS)
 	$(CXX) -o $@ $^
 
-test: $(TESTTARGETS)
-
-$(BUILDDIR)/%: $(TESTDIR)/%.cpp $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -o $@ $^
-
-$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
+$(TESTTARGETS): $(BUILDDIR)/%: $(BUILDDIR)/%.o $(OBJECTS) $(LIBOBJECTS)
+	$(CXX) -o $@ $^
 
 $(MAINOBJECT): $(MAINSOURCE)
+	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^
 
+$(TESTOBJECTS): $(BUILDDIR)/%.o: $(TESTDIR)/%.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^	
+
+$(OBJECTS): $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^	
+
+$(LIBOBJECTS): $(BUILDDIR)/%.o: $(LIBDIR)/%.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I $(INCLUDEDIR) -c -o $@ $^	
+
 clean:
-	rm $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)
 
 .PHONY: all clean

@@ -2,81 +2,13 @@
 #include <fcntl.h>
 #include <sys/epoll.h>
 
-#include <ipc.h>
-#include <networking.h>
+#include "utils/ipc_utils.hpp"
+#include "utils/inetw_utils.hpp"
 
-#include <conn_engine.hpp>
+#include "conn_engine.hpp"
 
 #define MAXEVENTS 32
 
-
-int listening_unix_socket(std::string unix_address, int n)
-{
-    int rc;
-    int fd = -1;
-    struct sockaddr_un addr_info = {0};
-
-    fd = socket(AF_UNIX, SOCK_STREAM, 0);
-
-    if (fd == -1)
-        return -1;
-
-    addr_info.sun_family = AF_UNIX;
-    addr_info.sun_path[0] = '\0';
-    strcpy(addr_info.sun_path + 1, unix_address.c_str());
-    
-    rc = bind(fd, (const struct sockaddr *)&addr_info, sizeof(addr_info.sun_family) + 1 + unix_address.length());
-
-    if (rc == -1) {
-        close(fd);
-
-        return -1;
-    }
-
-    rc = listen(fd, n);
-
-    if (rc == -1) {
-        close(fd);
-
-        return -1;
-    }
-
-    return fd;
-}
-
-int listening_inet_socket(uint32_t inet_address, uint16_t inet_port, int n)
-{
-    int rc;
-    int fd = -1;
-    struct sockaddr_in addr_info = {0};
-
-    fd = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (fd == -1)
-        return -1;
-
-    addr_info.sin_family = AF_INET;
-    addr_info.sin_addr.s_addr = htonl(inet_address);
-    addr_info.sin_port = htons(inet_port);
-
-    rc = bind(fd, (const struct sockaddr *)&addr_info, sizeof(addr_info));
-
-    if (rc == -1) {
-        close(fd);
-
-        return -1;
-    }
-
-    rc = listen(fd, n);
-
-    if (rc == -1) {
-        close(fd);
-
-        return -1;
-    }
-
-    return fd;
-}
 
 ConnectionEngine::ConnectionEngine() : epoll_fd(-1), lis_unix_sock(-1), lis_inet_sock(-1) {}
 
