@@ -1,3 +1,6 @@
+#ifndef CONN_ENGINE_HPP
+#define CONN_ENGINE_HPP
+
 #include <stdint.h>
 
 #include <string>
@@ -32,3 +35,5 @@ public:
     void run();
     void cleanup();
 };
+
+#endif /* conn_engine.hpp */

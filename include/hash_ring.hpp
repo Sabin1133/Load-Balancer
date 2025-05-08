@@ -1,5 +1,5 @@
-#ifndef HASH_RING_H
-#define HASH_RING_H
+#ifndef HASH_RING_HPP
+#define HASH_RING_HPP
 
 #include <stdint.h>
 
@@ -60,4 +60,4 @@ public:
     void print_ring();
 };
 
-#endif // hash_ring.hpp
+#endif /* hash_ring.hpp */

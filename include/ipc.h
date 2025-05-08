@@ -5,4 +5,4 @@
 
 #include <sys/un.h>
 
-#endif // ipc.h
+#endif /* ipc.h */

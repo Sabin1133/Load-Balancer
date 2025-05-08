@@ -1,5 +1,5 @@
-#ifndef NETWORKING_H
-#define NETWORKING_H
+#ifndef INETW_H
+#define INETW_H
 
 #include <sys/socket.h>
 
@@ -7,4 +7,4 @@
 
 #include <arpa/inet.h>
 
-#endif // networking.h
+#endif /* inetw.h */

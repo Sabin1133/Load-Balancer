@@ -49,9 +49,9 @@ int ConnectionEngine::setup(std::string unix_address, uint32_t inet_address, uin
     this->lis_unix_sock = lis_unix_sock;
     this->lis_inet_sock = lis_inet_sock;
 
-    // unnecessary
+    // remove later
     this->hash_ring.add(Endpoint(ntohl(inet_addr("127.0.0.1")), 8000));
-	this->hash_ring.add(Endpoint(ntohl(inet_addr("127.0.0.1")), 9000));
+    this->hash_ring.add(Endpoint(ntohl(inet_addr("127.0.0.1")), 9000));
 
     return 0;
 }
