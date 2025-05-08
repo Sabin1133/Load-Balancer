@@ -21,8 +21,8 @@ Copyright (c) 2024 Sabin Padurariu
 ## **General Overview**
 
 Trivial implementation of a load balancer that leverages consistent hashing to
-distribute the load (the traffic) to a large number of servers that have limited
-computing power.
+distribute the load to a large number of servers that have limited computing
+power.
 
 The balancer runs in the background and is configured using the `balancerctl`
 utility.
@@ -85,13 +85,23 @@ user@hostname:~$ balancerctl list
 
 ### The Connection Engine
 
-The `ConnectionEngine` lies at the **core** of the balancer and is resposible
+The **connection engine** is the **heart** of the balancer and is resposible
 with accepting and distributing incoming connections and forwarding the traffic
 from the clients to the servers.
 
-By **multiplexing connections** using the `epoll` kernel data structure, the
-balancer is able to achieve fast response times and improve performance.
+By leveraging the **multiplexing meachanism** provided by `epoll` kernel data
+structure, the balancer is able to achieve fast response times and 
+high performance.
 
 ### The Hash Ring
 
-The theoretical model used in consistent hashing is the **hash ring**.
+The theoretical model used in consistent hashing. It is used to distribute
+the connections across the servers and has a circular nature.
+
+The hash ring is implemented using an array and stores nodes that represent
+the servers.The nodes hold the hash of the server and the server id, a unique
+identifier given to the server when first added to the pool.
+
+The nodes array is sorted by the hash in each node to guarantee correct
+distribution across all servers. Clients are matched using their hash, using a
+simple binary search.
