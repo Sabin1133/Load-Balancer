@@ -7,8 +7,52 @@
 
 #include "conn_engine.hpp"
 
-#define MAXEVENTS 32
+#define EVENTS_MAX_NR 32
+#define INPUT_BUFF_MAX_SIZE 32
 
+
+enum class InputToken
+{
+    NONE,
+    START,
+    STOP,
+    ADD,
+    RMV,
+    LIST
+};
+
+enum InputToken parse_input_buffer(char *buffer)
+{
+    if (strcmp(buffer, "start") == 0)
+        return InputToken::ADD;
+
+    if (strcmp(buffer, "stop") == 0)
+        return InputToken::ADD;
+
+    if (strcmp(buffer, "add") == 0)
+        return InputToken::ADD;
+
+    if (strcmp(buffer, "rmv") == 0)
+        return InputToken::RMV;
+
+    if (strcmp(buffer, "list") == 0)
+        return InputToken::ADD;
+
+    return InputToken::NONE;
+}
+
+int check_address_buffer(char *buffer)
+{
+    int bytes;
+    uint32_t address;
+
+    bytes = sscanf(buffer, "%hhu.%hhu.%hhu.%hhu", (char *)&address + 3, (char *)&address + 2, (char *)&address + 1, (char *)&address);
+
+    if (bytes != 4)
+        return -1;
+
+    return 0;
+}
 
 ConnectionEngine::ConnectionEngine() : epoll_fd(-1), lis_unix_sock(-1), lis_inet_sock(-1) {}
 
@@ -56,7 +100,91 @@ int ConnectionEngine::setup(std::string unix_address, uint32_t inet_address, uin
     return 0;
 }
 
-void ConnectionEngine::handle_ctl() {}
+void ConnectionEngine::handle_ctl()
+{
+    int rc;
+    int lis_unix_sock = this->lis_unix_sock;
+    int client_sock = -1;
+    enum InputToken token;
+    char buffer[INPUT_BUFF_MAX_SIZE];
+    FILE *client_in_fh = NULL, *client_out_fh = NULL;
+
+    client_sock = accept(lis_unix_sock, NULL, NULL);
+
+    if (client_sock == -1)
+        return;
+
+    client_in_fh = fdopen(client_sock, "r");
+
+    if (!client_in_fh) {
+        close(client_sock);
+        return;
+    }
+
+    client_out_fh = fdopen(client_sock, "w");
+
+    if (!client_out_fh) {
+        fclose(client_in_fh);
+        close(client_sock);
+        return;
+    }
+
+    rc = fscanf(client_in_fh, "%s", buffer);
+
+    token = parse_input_buffer(buffer);
+
+    uint32_t address;
+    uint16_t port;
+
+    switch (token) {
+    case InputToken::START:
+        break;
+    case InputToken::STOP:
+        break;
+    case InputToken::ADD:
+        printf("adding\n");
+
+        rc = fscanf(client_in_fh, "%s", buffer);
+
+        if (rc < 1)
+            return;
+
+        rc = inet_pton(AF_INET, buffer, (in_addr *)&address);
+
+        if (rc == -1)
+            return;
+
+        rc = fscanf(client_in_fh, "%hu", &port);
+
+        if (rc < 1)
+            return;
+
+        this->hash_ring.add(Endpoint(ntohl(address), port));
+
+        inet_ntop(AF_INET, &address, buffer, sizeof(buffer));
+
+        printf("adding %s, %hu\n", buffer, port);
+
+        break;
+    case InputToken::RMV:
+        break;
+    case InputToken::LIST:
+        break;
+    case InputToken::NONE:
+        break;
+    }
+
+    while (rc > 0) {
+        printf("%d\n", rc);
+        fprintf(client_out_fh, "%s\n", buffer);
+
+        rc = fscanf(client_in_fh, "%s", buffer);
+    }
+
+    fclose(client_out_fh);
+    fclose(client_in_fh);
+    close(client_sock);
+}
 
 void ConnectionEngine::handle_connect()
 {
@@ -155,10 +283,10 @@ void ConnectionEngine::handle_traffic(int in_fd)
 void ConnectionEngine::run()
 {
     bool alive = true;
-    struct epoll_event events[MAXEVENTS];
+    struct epoll_event events[EVENTS_MAX_NR];
 
     while (alive) {
-        int events_n = epoll_wait(this->epoll_fd, events, MAXEVENTS, -1);
+        int events_n = epoll_wait(this->epoll_fd, events, EVENTS_MAX_NR, -1);
 
         for (int i = 0; i < events_n; ++i) {
             int fd = events[i].data.fd;
