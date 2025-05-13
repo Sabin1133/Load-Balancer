@@ -1,5 +1,7 @@
 #include <unistd.h>
 
+#include <string.h>
+
 #include "utils/inetw_utils.hpp"
 
 
@@ -7,13 +9,14 @@ int listening_inet_socket(uint32_t inet_address, uint16_t inet_port, int n)
 {
     int rc;
     int fd = -1;
-    struct sockaddr_in addr_info = {0};
+    struct sockaddr_in addr_info;
 
     fd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (fd == -1)
         return -1;
 
+    memset(&addr_info, 0, sizeof(addr_info));
     addr_info.sin_family = AF_INET;
     addr_info.sin_addr.s_addr = htonl(inet_address);
     addr_info.sin_port = htons(inet_port);
